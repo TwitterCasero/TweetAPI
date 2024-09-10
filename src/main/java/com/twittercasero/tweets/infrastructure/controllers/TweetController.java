@@ -1,6 +1,7 @@
 package com.twittercasero.tweets.infrastructure.controllers;
 
 import com.twittercasero.tweets.application.useCases.GetTweetByHashtagUseCase;
+import com.twittercasero.tweets.application.useCases.GetTweetByIdUseCase;
 import com.twittercasero.tweets.application.useCases.GetTweetByMentionsUseCase;
 import com.twittercasero.tweets.application.useCases.GetTweetByOwnersUseCase;
 import com.twittercasero.tweets.domain.entities.Tweet;
@@ -28,12 +29,27 @@ public class TweetController {
     @Autowired
     private GetTweetByMentionsUseCase getTweetByMentionsUseCase;
 
+    @Autowired
+    private GetTweetByIdUseCase getTweetByIdUseCase;
+
     @GetMapping()
     public ResponseEntity<List<Tweet>> getTweetByOwners(@RequestParam List<String> owners,
                                                         @RequestParam(defaultValue = "1") int page,
                                                         @RequestParam(defaultValue = "25") int size) {
 
         List<Tweet> tweets = getTweetByOwnersUseCase.apply(owners, PageRequest.of(page - 1, size));
+
+        if (tweets != null) {
+            return ResponseEntity.ok(tweets);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{tweetId}")
+    public ResponseEntity<Tweet> getTweetById(@PathVariable String tweetId) {
+
+        Tweet tweets = getTweetByIdUseCase.apply(tweetId);
 
         if (tweets != null) {
             return ResponseEntity.ok(tweets);

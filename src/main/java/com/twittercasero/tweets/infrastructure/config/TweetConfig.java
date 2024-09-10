@@ -7,6 +7,7 @@ import com.twittercasero.tweets.application.useCases.AddReplyUseCase;
 import com.twittercasero.tweets.application.useCases.AddRetweetUseCase;
 import com.twittercasero.tweets.application.useCases.CreateTweetUseCase;
 import com.twittercasero.tweets.application.useCases.GetTweetByHashtagUseCase;
+import com.twittercasero.tweets.application.useCases.GetTweetByIdUseCase;
 import com.twittercasero.tweets.application.useCases.GetTweetByMentionsUseCase;
 import com.twittercasero.tweets.application.useCases.GetTweetByOwnersUseCase;
 import com.twittercasero.tweets.application.useCases.impl.AddLikeOrDislikeUseCaseImpl;
@@ -14,6 +15,7 @@ import com.twittercasero.tweets.application.useCases.impl.AddReplyUseCaseImpl;
 import com.twittercasero.tweets.application.useCases.impl.AddRetweetUseCaseImpl;
 import com.twittercasero.tweets.application.useCases.impl.CreateTweetUseCaseImpl;
 import com.twittercasero.tweets.application.useCases.impl.GetTweetByHashtagUseCaseImpl;
+import com.twittercasero.tweets.application.useCases.impl.GetTweetByIdUseCaseImpl;
 import com.twittercasero.tweets.application.useCases.impl.GetTweetByMentionsUseCaseImpl;
 import com.twittercasero.tweets.application.useCases.impl.GetTweetByOwnersUseCaseImpl;
 import org.springframework.context.annotation.Bean;
@@ -58,5 +60,11 @@ public class TweetConfig {
     AddRetweetUseCase addRetweetUseCase(TweetInputPort tweetInputPort, TweetOutputPort tweetOutputPort) {
         return new AddRetweetUseCaseImpl(tweetInputPort, tweetOutputPort);
     }
+
+    @Bean
+    GetTweetByIdUseCase getTweetByIdUseCase(TweetOutputPort tweetOutputPort) {
+        return new GetTweetByIdUseCaseImpl(tweetOutputPort);
+    }
+
 
 }

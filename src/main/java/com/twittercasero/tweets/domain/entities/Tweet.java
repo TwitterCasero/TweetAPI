@@ -1,20 +1,24 @@
 package com.twittercasero.tweets.domain.entities;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Document(collection = "tweets")
 @Builder
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Tweet {
 
     @Id
@@ -27,7 +31,7 @@ public class Tweet {
     private String owner;
 
     @CreatedDate
-    private LocalDateTime posted;
+    private Date posted;
 
     @Builder.Default
     private List<String> mentions = new ArrayList<>();
@@ -47,15 +51,16 @@ public class Tweet {
     @Builder.Default
     private boolean edited = false;
 
-    // Constructor, getters and setters
-
     @Builder
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Reply {
         private String owner;
         private String message;
         @CreatedDate
-        private LocalDateTime posted;
+        private Date posted;
 
     }
+
 }

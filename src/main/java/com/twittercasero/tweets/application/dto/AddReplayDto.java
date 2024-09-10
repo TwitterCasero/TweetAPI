@@ -1,13 +1,17 @@
 package com.twittercasero.tweets.application.dto;
 
-import com.twittercasero.tweets.domain.entities.Tweet;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Builder
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class AddReplayDto {
 
     private String tweetId;
-    private Tweet.Reply reply;
+    private String nickName;
+    private String message;
 }

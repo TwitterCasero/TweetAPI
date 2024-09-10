@@ -1,7 +1,10 @@
 package com.twittercasero.tweets.infrastructure.message.consumer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twittercasero.tweets.application.dto.AddLikeDto;
 import com.twittercasero.tweets.application.dto.AddReplayDto;
+import com.twittercasero.tweets.application.dto.AddRetweetDTO;
 import com.twittercasero.tweets.application.useCases.AddLikeOrDislikeUseCase;
 import com.twittercasero.tweets.application.useCases.AddReplyUseCase;
 import com.twittercasero.tweets.application.useCases.AddRetweetUseCase;
@@ -26,28 +29,55 @@ public class TweetConsumer {
     @Autowired
     private AddReplyUseCase addReplyUseCase;
 
-    @KafkaListener(topics = "new-tweet-topic", groupId = "my-tweet-consumer-group")
-    public void receiveMessageToNewTweet(Tweet tweet) {
+    ObjectMapper mapper = new ObjectMapper();
 
-        createTweetUseCase.accept(tweet);
+    @KafkaListener(topics = "new-tweet-topic", groupId = "my-tweet-consumer-group")
+    public void receiveMessageToNewTweet(String message) {
+
+        try {
+            Tweet tweet = mapper.readValue(message, Tweet.class);
+            createTweetUseCase.accept(tweet);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @KafkaListener(topics = "add-like-topic", groupId = "my-tweet-consumer-group")
-    public void receiveMessageToAddLike(AddLikeDto message) {
+    public void receiveMessageToAddLike(String message) {
 
-        addLikeOrDislikeUseCase.accept(message.getTweetId(), message.getLike());
+        try {
+            AddLikeDto addLikeDto = mapper.readValue(message, AddLikeDto.class);
+            addLikeOrDislikeUseCase.accept(addLikeDto.getTweetId(), addLikeDto.getLike());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     @KafkaListener(topics = "add-reply-topic", groupId = "my-tweet-consumer-group")
-    public void receiveMessageToAddReply(AddReplayDto message) {
+    public void receiveMessageToAddReply(String message) {
 
-        addReplyUseCase.accept(message.getTweetId(), message.getReply());
+        try {
+            AddReplayDto addReplayDto = mapper.readValue(message, AddReplayDto.class);
+            addReplyUseCase.accept(addReplayDto);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     @KafkaListener(topics = "add-retweet-topic", groupId = "my-tweet-consumer-group")
     public void receiveMessageToAddRetweet(String message) {
 
-        addRetweetUseCase.accept(message);
+        try {
+            AddRetweetDTO addRetweetDTO = mapper.readValue(message, AddRetweetDTO.class);
+            addRetweetUseCase.accept(addRetweetDTO);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

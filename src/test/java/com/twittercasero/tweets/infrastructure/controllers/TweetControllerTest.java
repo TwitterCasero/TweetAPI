@@ -1,6 +1,7 @@
 package com.twittercasero.tweets.infrastructure.controllers;
 
 import com.twittercasero.tweets.application.useCases.GetTweetByHashtagUseCase;
+import com.twittercasero.tweets.application.useCases.GetTweetByIdUseCase;
 import com.twittercasero.tweets.application.useCases.GetTweetByMentionsUseCase;
 import com.twittercasero.tweets.application.useCases.GetTweetByOwnersUseCase;
 import com.twittercasero.tweets.domain.entities.Tweet;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -39,6 +41,9 @@ public class TweetControllerTest {
 
     @MockBean
     private GetTweetByMentionsUseCase getTweetByMentionsUseCase;
+
+    @MockBean
+    private GetTweetByIdUseCase getTweetByIdUseCase;
 
     @Test
     public void testGetTweetByOwnersReturnsTweets() throws Exception {
@@ -94,6 +99,32 @@ public class TweetControllerTest {
                 .andExpect(status().isOk());
 
         verify(getTweetByHashtagUseCase).apply(eq("tech"), any());
+    }
+
+    @Test
+    void testGetTweetByOwners_WhenTweetExists() throws Exception {
+
+        Tweet expectedTweet = Tweet.builder()
+                .id("1")
+                .message("Best message ever")
+                .build();
+
+        when(getTweetByIdUseCase.apply("1")).thenReturn(expectedTweet);
+
+        mockMvc.perform(get("/tweets/1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.message").value("Best message ever"));
+    }
+
+    @Test
+    void testGetTweetByOwners_WhenTweetDoesNotExist() throws Exception {
+        when(getTweetByIdUseCase.apply("1")).thenReturn(null);
+
+        mockMvc.perform(get("/tweets/1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
 

@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddLikeDto {
+public class AddRetweetDTO {
 
     private String tweetId;
-    private Boolean like;
+    private String nickName;
 }

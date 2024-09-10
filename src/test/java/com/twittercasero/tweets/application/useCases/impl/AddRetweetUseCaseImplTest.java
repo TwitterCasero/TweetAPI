@@ -1,5 +1,6 @@
 package com.twittercasero.tweets.application.useCases.impl;
 
+import com.twittercasero.tweets.application.dto.AddRetweetDTO;
 import com.twittercasero.tweets.application.port.input.TweetInputPort;
 import com.twittercasero.tweets.application.port.output.TweetOutputPort;
 import com.twittercasero.tweets.domain.entities.Tweet;
@@ -37,7 +38,7 @@ public class AddRetweetUseCaseImplTest {
                 .build();
         when(tweetOutputPort.findById("tweetId")).thenReturn(tweet);
 
-        addRetweetUseCase.accept("tweetId");
+        addRetweetUseCase.accept(AddRetweetDTO.builder().tweetId("tweetId").build());
 
         verify(tweetOutputPort).findById("tweetId");
         verify(tweetInputPort).save(tweet);
@@ -50,7 +51,7 @@ public class AddRetweetUseCaseImplTest {
         when(tweetOutputPort.findById("tweetId")).thenReturn(null);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            addRetweetUseCase.accept("tweetId");
+            addRetweetUseCase.accept(AddRetweetDTO.builder().tweetId("tweetId").build());
         });
 
         verify(tweetOutputPort).findById("tweetId");

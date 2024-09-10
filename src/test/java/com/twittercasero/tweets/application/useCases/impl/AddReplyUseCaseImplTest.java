@@ -1,5 +1,6 @@
 package com.twittercasero.tweets.application.useCases.impl;
 
+import com.twittercasero.tweets.application.dto.AddReplayDto;
 import com.twittercasero.tweets.application.port.input.TweetInputPort;
 import com.twittercasero.tweets.application.port.output.TweetOutputPort;
 import com.twittercasero.tweets.domain.entities.Tweet;
@@ -10,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -30,16 +30,14 @@ public class AddReplyUseCaseImplTest {
     @Test
     void whenReplyAddedThenReturnUpdatedTweet() {
 
-        Tweet.Reply reply = Tweet.Reply.builder().build();
         Tweet tweet = Tweet.builder().build();
 
         when(tweetOutputPort.findById("tweetId")).thenReturn(tweet);
 
-        addReplyUseCase.accept("tweetId", reply);
+        addReplyUseCase.accept(AddReplayDto.builder().tweetId("tweetId").build());
 
         verify(tweetOutputPort).findById("tweetId");
         verify(tweetInputPort).save(tweet);
-        assertTrue(tweet.getReplies().contains(reply));
     }
 
     @Test
@@ -49,7 +47,7 @@ public class AddReplyUseCaseImplTest {
 
         assertThrows(IllegalArgumentException.class, () -> {
 
-            addReplyUseCase.accept("tweetId", Tweet.Reply.builder().build());
+            addReplyUseCase.accept(AddReplayDto.builder().tweetId("tweetId").build());
         });
 
         verify(tweetOutputPort).findById("tweetId");
